@@ -1,4 +1,10 @@
+#pragma once
 #include <pthread.h>
 #include <vector>
 #include <queue>
-#include <priority_queue>
+
+class Bank {
+    int vip_threads;
+    int threads;
+    public:
+};
