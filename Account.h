@@ -10,25 +10,27 @@ using std::string;
 class ATM;
 enum Currency {USD, ILS};
 struct Balance {
-    int usd_balance=0;
-    int ils_balance=0;
+    double usd_balance=0;
+    double ils_balance=0;
+    Balance(double usd, double ils) : usd_balance(usd), ils_balance(ils) {}
 };
 class Account {
-    int ID;
+    unsigned ID;
     string password;
     Balance balance;
     ReadWriteLock lock;
-    public:
+    bool hasEnough(double amount, Currency currency) const;
+    bool deposit(double amount, Currency currency);
+    bool withdraw(double amount, Currency currency);
+    bool exchange(Currency source, Currency target, double amount);
+public:
     friend class ATM;
-    Account(int id, int password, int ils_balance, int usd_balance): ID(id), password(password), usd_balance(usd_balance) {};
-    bool checkPassword(int password) const;
-    Balance getBalance() const;
-    bool hasEnough(int amount, Currency currency) const;
-    void deposit(int amount, Currency currency);
-    void withdraw(int amount, Currency currency);
-    void exchange(Currency source, Currency target, int amount);
-    int getId() const;
-    int getPassword() const;
+    Account(unsigned id,const string& password, double ils_balance, double usd_balance): ID(id), balance(ils_balance,usd_balance) {
+        strcpy(this->password,password);
+    };
+    bool checkPassword(string password) const; //V
+    Balance getBalance() const; //V
+    unsigned getId() const; //V
 };
 
  bool Account::checkPassword(string password) const {
@@ -40,16 +42,66 @@ class Account {
 }
 
 
+unsigned Account::getId() const {
+    return ID;
+}
+ Balance Account::getBalance() const{
+     return balance;
+ }
 
-Balance getBalance() {
-
+bool Account::hasEnough(double amount, Currency currency) const {
+    if (currency == USD) {
+        if (amount > balance.usd_balance) {
+            return false;
+        } else {
+            return true;
+        }
+    } else {
+        if (amount > balance.ils_balance) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
 
-bool hasEnough(int amount, Currency currency) const;
-void deposit(int amount, Currency currency);
-void withdraw(int amount, Currency currency);
+bool Account::deposit(double amount, Currency currency){
+     if (!amount) {
+         return false;
+     }
+    if (currency == USD) {
+        balance.usd_balance += amount;
+        return true;
+    } else {
+        balance.ils_balance += amount;
+        return true;
+    }
+}
 
-void exchange(Currency source, Currency target, int amount);
+ bool Account::withdraw(double amount, Currency currency) {
+     if (hasEnough(amount,currency)) {
+         if (currency == USD) {
+             balance.usd_balance -= amount;
+             return true;
+         }else {
+             balance.ils_balance -= amount;
+             return true;
+         }
+     }
+     return false;
+ }
 
-int getId() const;
-int getPassword() const;
+bool Account::exchange(Currency source, Currency target, double amount) {
+    if (hasEnough(amount,source)) {
+        if (source==USD) {
+            balance.usd_balance -= amount;
+            balance.ils_balance += 5*amount;
+            return true;
+        } else {
+            balance.ils_balance -= amount;
+            balance.usd_balance += amount / 5;
+            return true;
+        }
+    }
+     return false;
+}

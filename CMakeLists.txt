@@ -4,9 +4,10 @@ project(Wet_2)
 set(CMAKE_CXX_STANDARD 11)
 
 add_executable(Wet_2
-        bank.cpp
+        Bank.cpp
         ATM.cpp
         Account.h
         ATM.h
         ReadWriteLock.h
-        ReadWriteLock.cpp)
+        ReadWriteLock.cpp
+        Account.h)
