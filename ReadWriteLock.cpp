@@ -51,7 +51,7 @@ void ReadWriteLock::writeUnlock() {
 }
 
 ReadWriteLock::~ReadWriteLock() {
-    pthread_cond_destroy(&readers_cond);
-    pthread_cond_destroy(&writers_cond);
+    pthread_cond_destroy(&can_read);
+    pthread_cond_destroy(&can_write);
     pthread_mutex_destroy(&lock);
 }
