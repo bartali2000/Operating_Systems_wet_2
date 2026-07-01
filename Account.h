@@ -26,7 +26,7 @@ class Account {
 public:
     friend class ATM;
     Account(unsigned id,const string& password, double ils_balance, double usd_balance): ID(id), balance(ils_balance,usd_balance) {
-        strcpy(this->password,password);
+       this->password = password;
     };
     bool checkPassword(string password) const; //V
     Balance getBalance() const; //V
@@ -34,7 +34,7 @@ public:
 };
 
  bool Account::checkPassword(string password) const {
-    if (strcmp(password,this->password) == 0) {
+    if (password == this->password) {
         return true;
     } else {
         return false;
